@@ -1,72 +1,19 @@
-import 'package:flutter/material.dart' show Locale;
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:sizzle_starter/src/feature/app/model/app_theme.dart';
-import 'package:sizzle_starter/src/feature/settings/data/locale_repository.dart';
-import 'package:sizzle_starter/src/feature/settings/data/theme_repository.dart';
+import 'dart:async';
 
-part 'settings_bloc.freezed.dart';
+import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
+import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart' as bloc_concurrency;
+import 'package:weather_and_dress/src/feature/app/model/app_theme.dart';
+import 'package:weather_and_dress/src/feature/settings/data/locale_repository.dart';
+import 'package:weather_and_dress/src/feature/settings/data/theme_repository.dart';
 
-/// States for the [SettingsBloc].
-@freezed
-sealed class SettingsState with _$SettingsState {
-  const SettingsState._();
+part 'settings_event.dart';
+part 'settings_state.dart';
 
-  /// Idle state for the [SettingsBloc].
-  const factory SettingsState.idle({
-    /// The current locale.
-    Locale? locale,
-
-    /// The current theme mode.
-    AppTheme? appTheme,
-  }) = _IdleSettingsState;
-
-  /// Processing state for the [SettingsBloc].
-  const factory SettingsState.processing({
-    /// The current locale.
-    Locale? locale,
-
-    /// The current theme mode.
-    AppTheme? appTheme,
-  }) = _ProcessingSettingsState;
-
-  /// Error state for the [SettingsBloc].
-  const factory SettingsState.error({
-    /// The error message.
-    required Object cause,
-
-    /// The current locale.
-    Locale? locale,
-
-    /// The current theme mode.
-    AppTheme? appTheme,
-  }) = _ErrorSettingsState;
-}
-
-/// Events for the [SettingsBloc].
-@freezed
-sealed class SettingsEvent with _$SettingsEvent {
-  const SettingsEvent._();
-
-  /// Event to update the theme mode.
-  const factory SettingsEvent.updateTheme({
-    /// The new theme mode.
-    required AppTheme appTheme,
-  }) = _UpdateThemeSettingsEvent;
-
-  /// Event to update the locale.
-  const factory SettingsEvent.updateLocale({
-    /// The new locale.
-    required Locale locale,
-  }) = _UpdateLocaleSettingsEvent;
-}
-
-/// {@template settings_bloc}
-/// A [Bloc] that handles the settings.
-/// {@endtemplate}
-final class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
-  /// {@macro settings_bloc}
-  SettingsBloc({
+/// Business Logic Component SeetingsBLoC
+class SettingsBLoC extends Bloc<SettingsEvent, SettingsState> {
+  SettingsBLoC({
     required LocaleRepository localeRepository,
     required ThemeRepository themeRepository,
     required SettingsState initialState,
@@ -74,39 +21,43 @@ final class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         _themeRepo = themeRepository,
         super(initialState) {
     on<SettingsEvent>(
-      (event, emit) => event.map(
+      (event, emit) => event.map<Future<void>>(
         updateTheme: (event) => _updateTheme(event, emit),
         updateLocale: (event) => _updateLocale(event, emit),
       ),
+      transformer: bloc_concurrency.sequential(),
+      //transformer: bloc_concurrency.restartable(),
+      //transformer: bloc_concurrency.droppable(),
+      //transformer: bloc_concurrency.concurrent(),
     );
   }
 
-  final LocaleRepository _localeRepo;
+  LocaleRepository _localeRepo;
   final ThemeRepository _themeRepo;
 
+  /// Fetch event handler
   Future<void> _updateTheme(
-    _UpdateThemeSettingsEvent event,
+    _UpdateThemeEvent event,
     Emitter<SettingsState> emitter,
   ) async {
     emitter(
       SettingsState.processing(
-        appTheme: state.appTheme,
+        theme: state.theme,
         locale: state.locale,
       ),
     );
 
     try {
-      await _themeRepo.setTheme(event.appTheme);
+      await _themeRepo.setTheme(event.theme);
 
       emitter(
-        SettingsState.idle(appTheme: event.appTheme, locale: state.locale),
+        SettingsState.idle(theme: event.theme, locale: state.locale),
       );
     } on Object catch (e) {
       emitter(
         SettingsState.error(
-          appTheme: state.appTheme,
+          theme: state.theme,
           locale: state.locale,
-          cause: e,
         ),
       );
       rethrow;
@@ -114,12 +65,12 @@ final class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   }
 
   Future<void> _updateLocale(
-    _UpdateLocaleSettingsEvent event,
+    _UpdateLocaleEvent event,
     Emitter<SettingsState> emitter,
   ) async {
     emitter(
       SettingsState.processing(
-        appTheme: state.appTheme,
+        theme: state.theme,
         locale: state.locale,
       ),
     );
@@ -128,17 +79,18 @@ final class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       await _localeRepo.setLocale(event.locale);
 
       emitter(
-        SettingsState.idle(appTheme: state.appTheme, locale: event.locale),
+        SettingsState.idle(theme: state.theme, locale: event.locale),
       );
     } on Object catch (e) {
       emitter(
         SettingsState.error(
-          appTheme: state.appTheme,
+          theme: state.theme,
           locale: state.locale,
-          cause: e,
         ),
       );
       rethrow;
     }
   }
 }
+
+class SeetingsEvent {}

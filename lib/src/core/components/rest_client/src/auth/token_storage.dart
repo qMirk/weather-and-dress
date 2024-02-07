@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:sizzle_starter/src/core/components/rest_client/src/auth/auth_interceptor.dart';
+import 'package:weather_and_dress/src/core/components/rest_client/src/auth/auth_interceptor.dart';
 
 /// The interface for token storage.
 ///

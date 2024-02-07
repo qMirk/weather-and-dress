@@ -1,5 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizzle_starter/src/feature/settings/bloc/settings_bloc.dart';
+import 'package:weather_and_dress/src/feature/settings/bloc/settings_bloc.dart';
 
 /// {@template dependencies}
 /// Dependencies container
@@ -15,7 +15,7 @@ base class Dependencies {
   final SharedPreferences sharedPreferences;
 
   /// [SettingsBloc] instance, used to manage theme and locale.
-  final SettingsBloc settingsBloc;
+  final SettingsBLoC settingsBloc;
 }
 
 /// {@template initialization_result}

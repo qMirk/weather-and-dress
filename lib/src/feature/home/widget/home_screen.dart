@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sizzle_starter/src/core/localization/localization.dart';
-import 'package:sizzle_starter/src/feature/settings/widget/settings_scope.dart';
+import 'package:weather_and_dress/src/core/localization/localization.dart';
+import 'package:weather_and_dress/src/feature/settings/widget/settings_scope.dart';
 
 /// {@template sample_page}
 /// SamplePage widget

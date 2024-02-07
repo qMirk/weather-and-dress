@@ -1,9 +1,9 @@
+import 'package:weather_and_dress/src/core/localization/localization.dart';
+import 'package:weather_and_dress/src/core/utils/extensions/context_extension.dart';
+import 'package:weather_and_dress/src/feature/app/model/app_theme.dart';
+import 'package:weather_and_dress/src/feature/settings/bloc/settings_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sizzle_starter/src/core/localization/localization.dart';
-import 'package:sizzle_starter/src/core/utils/extensions/context_extension.dart';
-import 'package:sizzle_starter/src/feature/app/model/app_theme.dart';
-import 'package:sizzle_starter/src/feature/settings/bloc/settings_bloc.dart';
 
 /// {@template theme_scope_controller}
 /// A controller that holds and operates the app theme.
@@ -64,7 +64,7 @@ class SettingsScope extends StatefulWidget {
   final Widget child;
 
   /// The [SettingsBloc] instance.
-  final SettingsBloc settingsBloc;
+  final SettingsBLoC settingsBloc;
 
   /// Get the [SettingsScopeController] of the closest [SettingsScope] ancestor.
   static SettingsScopeController of(
@@ -102,14 +102,14 @@ class _SettingsScopeState extends State<SettingsScope>
   @override
   void setThemeMode(ThemeMode themeMode) => widget.settingsBloc.add(
         SettingsEvent.updateTheme(
-          appTheme: AppTheme(mode: themeMode, seed: theme.seed),
+          theme: AppTheme(mode: themeMode, seed: theme.seed),
         ),
       );
 
   @override
   void setThemeSeedColor(Color color) => widget.settingsBloc.add(
         SettingsEvent.updateTheme(
-          appTheme: AppTheme(mode: theme.mode, seed: color),
+          theme: AppTheme(mode: theme.mode, seed: color),
         ),
       );
 
@@ -119,11 +119,11 @@ class _SettingsScopeState extends State<SettingsScope>
 
   @override
   AppTheme get theme =>
-      widget.settingsBloc.state.appTheme ?? AppTheme.defaultTheme;
+      widget.settingsBloc.state.theme ?? AppTheme.defaultTheme;
 
   @override
   Widget build(BuildContext context) =>
-      BlocBuilder<SettingsBloc, SettingsState>(
+      BlocBuilder<SettingsBLoC, SettingsState>(
         bloc: widget.settingsBloc,
         builder: (context, state) => _InheritedSettingsScope(
           controller: this,
@@ -155,7 +155,7 @@ class _InheritedSettingsScope extends InheritedModel<_SettingsScopeAspect> {
     var shouldNotify = false;
 
     if (dependencies.contains(_SettingsScopeAspect.theme)) {
-      shouldNotify = shouldNotify || state.appTheme != oldWidget.state.appTheme;
+      shouldNotify = shouldNotify || state.theme != oldWidget.state.theme;
     }
 
     if (dependencies.contains(_SettingsScopeAspect.locale)) {

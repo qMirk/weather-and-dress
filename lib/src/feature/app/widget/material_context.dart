@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sizzle_starter/src/core/localization/localization.dart';
-import 'package:sizzle_starter/src/feature/home/widget/home_screen.dart';
-import 'package:sizzle_starter/src/feature/settings/widget/settings_scope.dart';
+import 'package:weather_and_dress/src/core/localization/localization.dart';
+import 'package:weather_and_dress/src/feature/home/widget/home_screen.dart';
+import 'package:weather_and_dress/src/feature/settings/widget/settings_scope.dart';
 
 /// {@template material_context}
 /// [MaterialContext] is an entry point to the material context.

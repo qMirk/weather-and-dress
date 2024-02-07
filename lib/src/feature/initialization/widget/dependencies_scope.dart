@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:sizzle_starter/src/core/utils/extensions/context_extension.dart';
-import 'package:sizzle_starter/src/feature/initialization/model/dependencies.dart';
+import 'package:weather_and_dress/src/core/utils/extensions/context_extension.dart';
+import 'package:weather_and_dress/src/feature/initialization/model/dependencies.dart';
 
 /// {@template dependencies_scope}
 /// A widget which is responsible for providing the dependencies.
